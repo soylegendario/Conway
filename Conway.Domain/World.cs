@@ -1,6 +1,6 @@
 namespace Conway.Domain;
 
-public class World
+internal sealed class World
 {
     public int Width { get; }
     public int Height { get; }

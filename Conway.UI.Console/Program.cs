@@ -1,6 +1,6 @@
-using Conway.Domain;
+﻿using Conway.Domain;
 
-namespace Conway.Application.Console;
+namespace Conway.UI.Console;
 
 public class Program
 {

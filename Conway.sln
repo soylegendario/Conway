@@ -1,8 +1,8 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.Domain", "Conway.Domain\Conway.Domain.csproj", "{945C0C47-1932-4BE4-9DFA-200982CE603B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.Application.Console", "Conway.Application.Console\Conway.Application.Console.csproj", "{DB6D0360-EFC8-44E3-8954-96AF5B6E49FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.UI.Console", "Conway.UI.Console\Conway.UI.Console.csproj", "{DB6D0360-EFC8-44E3-8954-96AF5B6E49FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
