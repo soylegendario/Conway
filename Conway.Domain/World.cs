@@ -1,6 +1,6 @@
 namespace Conway.Domain;
 
-public class World
+internal sealed class World
 {
     public int Width { get; }
     public int Height { get; }
@@ -62,7 +62,7 @@ public class World
         return GenerationHistory.Count;
     }
     
-    private void Initialize()
+    public void Initialize()
     {
         Cells = new Cell[Width, Height];
         GenerationHistory = [];   
