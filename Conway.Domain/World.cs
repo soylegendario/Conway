@@ -62,7 +62,7 @@ internal sealed class World
         return GenerationHistory.Count;
     }
     
-    private void Initialize()
+    public void Initialize()
     {
         Cells = new Cell[Width, Height];
         GenerationHistory = [];   

@@ -50,6 +50,7 @@ public static class GameGrid
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
+            world.Initialize();
             var random = new Random();
             for (int i = 0; i < world.Cells.GetLength(0); i++)
             {
