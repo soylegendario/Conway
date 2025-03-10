@@ -1,15 +1,26 @@
+using System.Collections.Concurrent;
+
 namespace Conway.Domain;
 
 public static class GameGrid
 {
-    private static readonly Dictionary<string, World> _worlds = [];
+    private static readonly ConcurrentDictionary<string, World> _worlds = new();
+    private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public static string NewGame(int width, int height)
+    public static async Task<string> NewGame(int width, int height)
     {
-        var world = new World(width, height);
-        var id = GenerateUniqueId();
-        _worlds.Add(id, world);
-        return id;
+        await _semaphore.WaitAsync();
+        try
+        {
+            var world = new World(width, height);
+            var id = GenerateUniqueGameId();
+            _worlds.TryAdd(id, world);
+            return id;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     public static GameStatus? GetWorld(string gameId)
@@ -63,6 +74,16 @@ public static class GameGrid
                 }
             }
         }
+    }
+
+    private static string GenerateUniqueGameId()
+    {
+        string id;
+        do
+        {
+            id = GenerateUniqueId();
+        } while (_worlds.ContainsKey(id));
+        return id;
     }
 
     private static string GenerateUniqueId()
