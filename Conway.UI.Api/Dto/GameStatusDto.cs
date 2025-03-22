@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using Conway.Api.Serialization;
 
 namespace Conway.Api.Dto;
 

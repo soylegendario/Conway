@@ -2,7 +2,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Conway.Api;
+namespace Conway.Api.Serialization;
 
 public class IntArray2DJsonConverter : JsonConverter<int[,]>
 {
