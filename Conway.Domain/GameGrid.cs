@@ -1,18 +1,29 @@
+using System.Collections.Concurrent;
+
 namespace Conway.Domain;
 
-public static class GameGrid
+public class GameGrid
 {
-    private static readonly Dictionary<string, World> _worlds = [];
+    private readonly ConcurrentDictionary<string, World> _worlds = new();
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public static string NewGame(int width, int height)
+    public async Task<string> NewGame(int width, int height)
     {
-        var world = new World(width, height);
-        var id = GenerateUniqueId();
-        _worlds.Add(id, world);
-        return id;
+        await _semaphore.WaitAsync();
+        try
+        {
+            var world = new World(width, height);
+            var id = GenerateUniqueGameId();
+            _worlds.TryAdd(id, world);
+            return id;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
-    public static GameStatus? GetWorld(string gameId)
+    public GameStatus? GetWorld(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -30,7 +41,7 @@ public static class GameGrid
         return null;
     }
 
-    public static void ToggleCellState(string gameId, int x, int y)
+    public void ToggleCellState(string gameId, int x, int y)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -38,7 +49,7 @@ public static class GameGrid
         }
     }
 
-    public static void AdvanceGeneration(string gameId)
+    public void AdvanceGeneration(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -46,7 +57,7 @@ public static class GameGrid
         }
     }
 
-    public static void Shuffle(string gameId)
+    public void Shuffle(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -65,7 +76,17 @@ public static class GameGrid
         }
     }
 
-    private static string GenerateUniqueId()
+    private string GenerateUniqueGameId()
+    {
+        string id;
+        do
+        {
+            id = GenerateUniqueId();
+        } while (_worlds.ContainsKey(id));
+        return id;
+    }
+
+    private string GenerateUniqueId()
     {
         var guid = Guid.NewGuid().ToString();
         var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(guid));

@@ -4,7 +4,9 @@ namespace Conway.UI.Console;
 
 public class Program
 {
-    static void Main()
+    private static readonly GameGrid _gameGrid = new();
+
+    static async Task Main()
     {
         System.Console.WriteLine("Welcome to Conway's Game of Life");
         System.Console.Write("Enter the width of the world: ");
@@ -12,7 +14,7 @@ public class Program
         System.Console.Write("Enter the height of the world: ");
         var height = int.Parse(System.Console.ReadLine() ?? "5");
 
-        var gameId = GameGrid.NewGame(width, height);
+        var gameId = await _gameGrid.NewGame(width, height);
 
         while (true)
         {
@@ -32,7 +34,7 @@ public class Program
                     PrintWorld(gameId);
                     break;
                 case "2":
-                    GameGrid.AdvanceGeneration(gameId);
+                    _gameGrid.AdvanceGeneration(gameId);
                     PrintWorld(gameId);
                     break;
                 case "3":
@@ -40,11 +42,11 @@ public class Program
                     var x = int.Parse(System.Console.ReadLine() ?? "0");
                     System.Console.Write("Enter the Y coordinate of the cell: ");
                     var y = int.Parse(System.Console.ReadLine() ?? "0");
-                    GameGrid.ToggleCellState(gameId, x, y);
+                    _gameGrid.ToggleCellState(gameId, x, y);
                     System.Console.WriteLine("Cell state toggled.");
                     break;
                 case "4":
-                    GameGrid.Shuffle(gameId);
+                    _gameGrid.Shuffle(gameId);
                     PrintWorld(gameId);
                     break;
                 case "5":
@@ -56,7 +58,7 @@ public class Program
                             break;
                         }
                         PrintWorld(gameId);
-                        GameGrid.AdvanceGeneration(gameId);
+                        _gameGrid.AdvanceGeneration(gameId);
                         System.Threading.Thread.Sleep(500);
                     }
                     break;
@@ -72,7 +74,7 @@ public class Program
     static void PrintWorld(string gameId)
     {
         System.Console.WriteLine($"Game ID: {gameId}");
-        var gameStatus = GameGrid.GetWorld(gameId);
+        var gameStatus = _gameGrid.GetWorld(gameId);
         if (gameStatus is null)
         {
             System.Console.WriteLine("Invalid game ID");
