@@ -2,12 +2,12 @@ using System.Collections.Concurrent;
 
 namespace Conway.Domain;
 
-public static class GameGrid
+public class GameGrid
 {
-    private static readonly ConcurrentDictionary<string, World> _worlds = new();
-    private static readonly SemaphoreSlim _semaphore = new(1, 1);
+    private readonly ConcurrentDictionary<string, World> _worlds = new();
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public static async Task<string> NewGame(int width, int height)
+    public async Task<string> NewGame(int width, int height)
     {
         await _semaphore.WaitAsync();
         try
@@ -23,7 +23,7 @@ public static class GameGrid
         }
     }
 
-    public static GameStatus? GetWorld(string gameId)
+    public GameStatus? GetWorld(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -41,7 +41,7 @@ public static class GameGrid
         return null;
     }
 
-    public static void ToggleCellState(string gameId, int x, int y)
+    public void ToggleCellState(string gameId, int x, int y)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -49,7 +49,7 @@ public static class GameGrid
         }
     }
 
-    public static void AdvanceGeneration(string gameId)
+    public void AdvanceGeneration(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -57,7 +57,7 @@ public static class GameGrid
         }
     }
 
-    public static void Shuffle(string gameId)
+    public void Shuffle(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -76,7 +76,7 @@ public static class GameGrid
         }
     }
 
-    private static string GenerateUniqueGameId()
+    private string GenerateUniqueGameId()
     {
         string id;
         do
@@ -86,7 +86,7 @@ public static class GameGrid
         return id;
     }
 
-    private static string GenerateUniqueId()
+    private string GenerateUniqueId()
     {
         var guid = Guid.NewGuid().ToString();
         var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(guid));
