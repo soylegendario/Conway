@@ -2,7 +2,7 @@ using Conway.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<GameGrid>();
+builder.Services.AddSingleton<IGameGrid, GameGrid>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

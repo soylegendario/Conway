@@ -1,6 +1,6 @@
 namespace Conway.Domain;
 
-internal sealed class World
+public sealed class World
 {
     public int Width { get; }
     public int Height { get; }
@@ -14,12 +14,14 @@ internal sealed class World
         Initialize();
     }
 
-    public void ToggleCellState(int x, int y)
+    public bool ToggleCellState(int x, int y)
     {
         if (IsValidPosition(x, y))
         {
             Cells[x, y].ToggleState();
+            return true;
         }
+        return false;
     }
     
     public void AdvanceGeneration()
