@@ -1,6 +1,6 @@
 namespace Conway.Domain;
 
-internal sealed class Cell(int x, int y, bool isAlive)
+public sealed class Cell(int x, int y, bool isAlive)
 {
     public bool IsAlive { get; private set; } = isAlive;
     public int X { get; set; } = x;

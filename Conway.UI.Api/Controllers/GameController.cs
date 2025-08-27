@@ -8,7 +8,7 @@ namespace Conway.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GameController(GameGrid gameGrid) : ControllerBase
+public class GameController(IGameGrid gameGrid) : ControllerBase
 {
     [HttpPost("new")]
     public async Task<IActionResult> NewGame([FromQuery] int width, [FromQuery] int height)
@@ -33,21 +33,44 @@ public class GameController(GameGrid gameGrid) : ControllerBase
     [HttpPost("{gameId}/toggle")]
     public IActionResult ToggleCellState([FromRoute] string gameId, [FromQuery] int x, [FromQuery] int y)
     {
-        gameGrid.ToggleCellState(gameId, x, y);
+        var success = gameGrid.ToggleCellState(gameId, x, y);
+        if (!success)
+        {
+            return BadRequest(new { message = "Coordenadas inválidas o el juego no existe." });
+        }
         return NoContent();
     }
 
     [HttpPost("{gameId}/advance")]
     public IActionResult AdvanceGeneration([FromRoute] string gameId)
     {
-        gameGrid.AdvanceGeneration(gameId);
+        var success = gameGrid.AdvanceGeneration(gameId);
+        if (!success)
+        {
+            return NotFound(new { message = "El juego no existe." });
+        }
         return NoContent();
     }
 
     [HttpPost("{gameId}/shuffle")]
     public IActionResult Shuffle(string gameId)
     {
-        gameGrid.Shuffle(gameId);
+        var success = gameGrid.Shuffle(gameId);
+        if (!success)
+        {
+            return NotFound(new { message = "El juego no existe." });
+        }
+        return NoContent();
+    }
+
+    [HttpPost("{gameId}/undo")]
+    public IActionResult UndoGeneration([FromRoute] string gameId)
+    {
+        var success = gameGrid.UndoGeneration(gameId);
+        if (!success)
+        {
+            return BadRequest(new { message = "No hay generaciones anteriores para deshacer o el juego no existe." });
+        }
         return NoContent();
     }
 }

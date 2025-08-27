@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 
 namespace Conway.Domain;
 
-public class GameGrid
+public class GameGrid : IGameGrid
 {
     private readonly ConcurrentDictionary<string, World> _worlds = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -41,23 +41,26 @@ public class GameGrid
         return null;
     }
 
-    public void ToggleCellState(string gameId, int x, int y)
+    public bool ToggleCellState(string gameId, int x, int y)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
-            world.ToggleCellState(x, y);
+            return world.ToggleCellState(x, y);
         }
+        return false;
     }
 
-    public void AdvanceGeneration(string gameId)
+    public bool AdvanceGeneration(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
             world.AdvanceGeneration();
+            return true;
         }
+        return false;
     }
 
-    public void Shuffle(string gameId)
+    public bool Shuffle(string gameId)
     {
         if (_worlds.TryGetValue(gameId, out var world))
         {
@@ -73,7 +76,20 @@ public class GameGrid
                     }
                 }
             }
+            return true;
         }
+        return false;
+    }
+
+    public bool UndoGeneration(string gameId)
+    {
+        if (_worlds.TryGetValue(gameId, out var world))
+        {
+            var generationCount = world.GetGenerationCount();
+            world.UndoGeneration();
+            return world.GetGenerationCount() < generationCount;
+        }
+        return false;
     }
 
     private string GenerateUniqueGameId()
