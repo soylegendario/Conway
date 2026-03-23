@@ -2,7 +2,12 @@
 using Conway.UI.Console.Rendering;
 using Spectre.Console;
 
+const string OPTION_NEW_GAME = "[green]1. Nuevo juego[/]";
+const string OPTION_LOAD_GAME = "[yellow]2. Cargar juego[/]";
+const string OPTION_EXIT = "[red]0. Salir[/]";
+
 var continueRunning = true;
+
 while (continueRunning)
 {
     AnsiConsole.Clear();
@@ -11,6 +16,30 @@ while (continueRunning)
             .Centered()
             .Color(Color.Green));
 
+    var option = AnsiConsole.Prompt(
+        new SelectionPrompt<string>()
+            .Title("[yellow]Menú Principal[/]")
+            .PageSize(10)
+            .AddChoices(OPTION_NEW_GAME, OPTION_LOAD_GAME, OPTION_EXIT));
+
+    switch (option)
+    {
+        case OPTION_NEW_GAME:
+            await RunNewGame();
+            break;
+        case OPTION_LOAD_GAME:
+            AnsiConsole.MarkupLine("[yellow]Funcionalidad 'Cargar juego' no implementada aún.[/]");
+            AnsiConsole.MarkupLine("[grey]Presione cualquier tecla para volver al menú...[/]");
+            Console.ReadKey(true);
+            break;
+        case OPTION_EXIT:
+            continueRunning = false;
+            break;
+    }
+}
+
+async Task RunNewGame()
+{
     var width = AnsiConsole.Prompt(
         new TextPrompt<int>("[white]Introduce el [green]ancho[/] del mundo (10-100):[/]")
             .ValidationErrorMessage("[red]Por favor, introduce un número válido entre 10 y 100[/]")
@@ -36,5 +65,5 @@ while (continueRunning)
     grid.Shuffle(gameId);
 
     var renderer = new SpectreLiveRenderer();
-    continueRunning = await renderer.StartRenderLoopAsync(grid, gameId, 100);
+    await renderer.StartRenderLoopAsync(grid, gameId, 100);
 }
