@@ -6,6 +6,10 @@ const string OPTION_NEW_GAME = "[green]1. Nuevo juego[/]";
 const string OPTION_LOAD_GAME = "[yellow]2. Cargar juego[/]";
 const string OPTION_EXIT = "[red]0. Salir[/]";
 
+const string SETUP_OPTION_SHUFFLE = "1. Colocar células automáticamente";
+const string SETUP_OPTION_START   = "2. Iniciar";
+const string SETUP_OPTION_BACK    = "0. Volver al menú principal";
+
 var continueRunning = true;
 
 while (continueRunning)
@@ -62,8 +66,59 @@ async Task RunNewGame()
 
     var grid = new GameGrid();
     var gameId = await grid.NewGame(width, height);
-    grid.Shuffle(gameId);
 
-    var renderer = new SpectreLiveRenderer();
-    await renderer.StartRenderLoopAsync(grid, gameId, 100);
+    var setupStatus = grid.GetWorld(gameId)!;
+    RenderSetupBoard(setupStatus, gameId);
+
+    var inSetup = true;
+    while (inSetup)
+    {
+        var setupOption = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[yellow]Configuración del juego[/]")
+                .PageSize(5)
+                .AddChoices(SETUP_OPTION_SHUFFLE, SETUP_OPTION_START, SETUP_OPTION_BACK));
+
+        switch (setupOption)
+        {
+            case SETUP_OPTION_SHUFFLE:
+                grid.Shuffle(gameId);
+                setupStatus = grid.GetWorld(gameId)!;
+                RenderSetupBoard(setupStatus, gameId);
+                break;
+
+            case SETUP_OPTION_START:
+                inSetup = false;
+                var renderer = new SpectreLiveRenderer();
+                await renderer.StartRenderLoopAsync(grid, gameId, 100);
+                break;
+
+            case SETUP_OPTION_BACK:
+                inSetup = false;
+                break;
+        }
+    }
+}
+
+void RenderSetupBoard(GameStatus status, string gameId)
+{
+    AnsiConsole.Clear();
+
+    var canvas = new Canvas(status.Width, status.Height);
+    for (var y = 0; y < status.Height; y++)
+    {
+        for (var x = 0; x < status.Width; x++)
+        {
+            canvas.SetPixel(x, y, status.Cells[y, x] == 1 ? Color.Green : Color.Black);
+        }
+    }
+
+    var table = new Table().Centered();
+    table.AddColumn(new TableColumn("[yellow]Conway's Game of Life — Configuración[/]").Centered());
+
+    var info = $"[blue]Game ID:[/] {gameId} | [grey]Elige una opción para continuar[/]";
+    table.AddRow(new Panel(info).BorderColor(Color.Blue).Header("Configuración"));
+    table.AddRow(canvas);
+
+    AnsiConsole.Write(table);
 }

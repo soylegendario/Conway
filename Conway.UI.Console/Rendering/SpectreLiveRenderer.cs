@@ -9,6 +9,7 @@ public class SpectreLiveRenderer : IGameRenderer
     {
         var shouldRestart = false;
         var shouldExit = false;
+        AnsiConsole.Clear();
 
         await AnsiConsole.Live(new Text("Cargando..."))
             .StartAsync(async ctx =>
