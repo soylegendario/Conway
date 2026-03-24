@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+#
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.Domain", "Conway.Domain\Conway.Domain.csproj", "{945C0C47-1932-4BE4-9DFA-200982CE603B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.UI.Console", "Conway.UI.Console\Conway.UI.Console.csproj", "{DB6D0360-EFC8-44E3-8954-96AF5B6E49FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.UI.Api", "Conway.UI.Api\Conway.UI.Api.csproj", "{EFE6FB71-D6C8-4E54-A780-733031BD2AFE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.Api", "Conway.Api\Conway.Api.csproj", "{EFE6FB71-D6C8-4E54-A780-733031BD2AFE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.Tests", "Conway.Tests\Conway.Tests.csproj", "{2567FD5A-D08F-4F7A-AEB9-C363D4440CC8}"
 EndProject

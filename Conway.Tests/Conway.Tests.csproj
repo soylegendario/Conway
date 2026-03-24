@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Conway.Domain\Conway.Domain.csproj" />
-    <ProjectReference Include="..\Conway.UI.Api\Conway.UI.Api.csproj" />
+    <ProjectReference Include="..\Conway.Api\Conway.Api.csproj" />
   </ItemGroup>
 
 </Project>
