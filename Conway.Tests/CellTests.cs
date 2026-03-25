@@ -1,4 +1,3 @@
-using AutoFixture;
 using Conway.Domain;
 using Xunit;
 
@@ -6,85 +5,51 @@ namespace Conway.Tests;
 
 public class CellTests
 {
-    private readonly Fixture _fixture;
-
-    public CellTests()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Constructor_ShouldInitializeCellWithCorrectIsAlive(bool isAlive)
     {
-        _fixture = new Fixture();
+        var cell = new Cell(isAlive);
+
+        Assert.Equal(isAlive, cell.IsAlive);
     }
 
     [Fact]
-    public void Constructor_ShouldInitializeCellWithCorrectValues()
+    public void TwoCells_WithSameIsAlive_ShouldBeEqual()
     {
-        // Arrange
-        var x = _fixture.Create<int>();
-        var y = _fixture.Create<int>();
-        var isAlive = _fixture.Create<bool>();
+        var a = new Cell(true);
+        var b = new Cell(true);
 
-        // Act
-        var cell = new Cell(x, y, isAlive);
+        Assert.Equal(a, b);
+    }
 
-        // Assert
-        Assert.Equal(x, cell.X);
-        Assert.Equal(y, cell.Y);
-        Assert.Equal(isAlive, cell.IsAlive);
+    [Fact]
+    public void TwoCells_WithDifferentIsAlive_ShouldNotBeEqual()
+    {
+        var a = new Cell(true);
+        var b = new Cell(false);
+
+        Assert.NotEqual(a, b);
     }
 
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void ToggleState_ShouldChangeIsAliveState(bool initialState)
+    public void Cell_WithToggledIsAlive_ShouldHaveOppositeState(bool initialState)
     {
-        // Arrange
-        var cell = new Cell(0, 0, initialState);
+        var cell = new Cell(initialState);
+        var toggled = new Cell(!cell.IsAlive);
 
-        // Act
-        cell.ToggleState();
-
-        // Assert
-        Assert.Equal(!initialState, cell.IsAlive);
+        Assert.Equal(!initialState, toggled.IsAlive);
     }
 
     [Fact]
-    public void ToggleState_CalledTwice_ShouldReturnToOriginalState()
+    public void Cell_ToggledTwice_ShouldReturnToOriginalState()
     {
-        // Arrange
-        var initialState = _fixture.Create<bool>();
-        var cell = new Cell(0, 0, initialState);
+        var cell = new Cell(true);
+        var toggled = new Cell(!new Cell(!cell.IsAlive).IsAlive);
 
-        // Act
-        cell.ToggleState();
-        cell.ToggleState();
-
-        // Assert
-        Assert.Equal(initialState, cell.IsAlive);
-    }
-
-    [Fact]
-    public void X_Property_ShouldBeSettable()
-    {
-        // Arrange
-        var cell = new Cell(0, 0, false);
-        var newX = _fixture.Create<int>();
-
-        // Act
-        cell.X = newX;
-
-        // Assert
-        Assert.Equal(newX, cell.X);
-    }
-
-    [Fact]
-    public void Y_Property_ShouldBeSettable()
-    {
-        // Arrange
-        var cell = new Cell(0, 0, false);
-        var newY = _fixture.Create<int>();
-
-        // Act
-        cell.Y = newY;
-
-        // Assert
-        Assert.Equal(newY, cell.Y);
+        Assert.Equal(cell.IsAlive, toggled.IsAlive);
     }
 }

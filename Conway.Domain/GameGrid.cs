@@ -25,28 +25,23 @@ public class GameGrid : IGameGrid
 
     public GameStatus? GetWorld(string gameId)
     {
-        if (_worlds.TryGetValue(gameId, out var world))
-        {
-            var cells = new int[world.Cells.GetLength(0), world.Cells.GetLength(1)];
-            for (int i = 0; i < world.Cells.GetLength(0); i++)
-            {
-                for (int j = 0; j < world.Cells.GetLength(1); j++)
-                {
-                    cells[i, j] = world.Cells[i, j].IsAlive ? 1 : 0;
-                }
-            }
-            return new GameStatus(world.Height, world.Width, cells, world.GenerationHistory.Count);
-        }
+        if (!_worlds.TryGetValue(gameId, out var world)) return null;
 
-        return null;
+        var cells = new int[world.Width, world.Height];
+        for (var x = 0; x < world.Width; x++)
+        {
+            for (var y = 0; y < world.Height; y++)
+            {
+                cells[x, y] = world.GetCell(x, y).IsAlive ? 1 : 0;
+            }
+        }
+        return new GameStatus(world.Height, world.Width, cells, world.GenerationHistory.Count);
     }
 
     public bool ToggleCellState(string gameId, int x, int y)
     {
         if (_worlds.TryGetValue(gameId, out var world))
-        {
             return world.ToggleCellState(x, y);
-        }
         return false;
     }
 
@@ -62,23 +57,19 @@ public class GameGrid : IGameGrid
 
     public bool Shuffle(string gameId)
     {
-        if (_worlds.TryGetValue(gameId, out var world))
+        if (!_worlds.TryGetValue(gameId, out var world)) return false;
+
+        world.Initialize();
+        var random = new Random();
+        for (var x = 0; x < world.Width; x++)
         {
-            world.Initialize();
-            var random = new Random();
-            for (int i = 0; i < world.Cells.GetLength(0); i++)
+            for (var y = 0; y < world.Height; y++)
             {
-                for (int j = 0; j < world.Cells.GetLength(1); j++)
-                {
-                    if (random.Next(2) == 1)
-                    {
-                        ToggleCellState(gameId, i, j);
-                    }
-                }
+                if (random.Next(2) == 1)
+                    world.ToggleCellState(x, y);
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     public bool UndoGeneration(string gameId)
