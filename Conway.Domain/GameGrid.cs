@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Conway.Domain;
 
@@ -27,12 +29,12 @@ public class GameGrid : IGameGrid
     {
         if (!_worlds.TryGetValue(gameId, out var world)) return null;
 
-        var cells = new int[world.Width, world.Height];
-        for (var x = 0; x < world.Width; x++)
+        var cells = new int[world.Height, world.Width];
+        for (var y = 0; y < world.Height; y++)
         {
-            for (var y = 0; y < world.Height; y++)
+            for (var x = 0; x < world.Width; x++)
             {
-                cells[x, y] = world.GetCell(x, y).IsAlive ? 1 : 0;
+                cells[y, x] = world.GetCell(x, y).IsAlive ? 1 : 0;
             }
         }
         return new GameStatus(world.Height, world.Width, cells, world.GenerationHistory.Count);
@@ -96,7 +98,7 @@ public class GameGrid : IGameGrid
     private string GenerateUniqueId()
     {
         var guid = Guid.NewGuid().ToString();
-        var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(guid));
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(guid));
         return Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-");
     }
 }
