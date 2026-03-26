@@ -1,6 +1,5 @@
 using AutoFixture;
 using Conway.Domain;
-using Xunit;
 
 namespace Conway.Tests;
 
@@ -62,8 +61,8 @@ public class GameGridTests
         Assert.Equal(width, result.Width);
         Assert.Equal(height, result.Height);
         Assert.Equal(0, result.Ticks);
-        Assert.Equal(width, result.Cells.GetLength(0));
-        Assert.Equal(height, result.Cells.GetLength(1));
+        Assert.Equal(height, result.Cells.GetLength(0)); // Fila (Height)
+        Assert.Equal(width, result.Cells.GetLength(1));  // Columna (Width)
     }
 
     [Fact]
@@ -94,7 +93,7 @@ public class GameGridTests
         Assert.True(result);
         
         var gameStatus = _gameGrid.GetWorld(gameId);
-        Assert.Equal(1, gameStatus!.Cells[x, y]); // Cell should be alive
+        Assert.Equal(1, gameStatus!.Cells[y, x]); // Fila/Columna: Cells[y, x]
     }
 
     [Fact]

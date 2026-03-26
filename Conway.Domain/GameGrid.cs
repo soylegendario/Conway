@@ -1,28 +1,17 @@
 using System.Collections.Concurrent;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Conway.Domain;
 
 public class GameGrid : IGameGrid
 {
     private readonly ConcurrentDictionary<string, World> _worlds = new();
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public async Task<string> NewGame(int width, int height)
+    public Task<string> NewGame(int width, int height)
     {
-        await _semaphore.WaitAsync();
-        try
-        {
-            var world = new World(width, height);
-            var id = GenerateUniqueGameId();
-            _worlds.TryAdd(id, world);
-            return id;
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+        var world = new World(width, height);
+        var id = GenerateUniqueGameId();
+        _worlds.TryAdd(id, world);
+        return Task.FromResult(id);
     }
 
     public GameStatus? GetWorld(string gameId)
@@ -97,8 +86,6 @@ public class GameGrid : IGameGrid
 
     private string GenerateUniqueId()
     {
-        var guid = Guid.NewGuid().ToString();
-        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(guid));
-        return Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-");
+        return Guid.NewGuid().ToString("N");
     }
 }
